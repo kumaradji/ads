@@ -1,0 +1,8 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <h1>Response Detail</h1>
+  <h2>Response by: {{ object.author }}</h2>
+  <p>Response Text: {{ object.response_text }}</p>
+  <!-- Дополнительные поля и информация об отклике -->
+{% endblock %}

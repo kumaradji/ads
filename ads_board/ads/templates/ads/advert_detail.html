@@ -1,0 +1,9 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <h1>Advert Detail</h1>
+  <h2>{{ object.title }}</h2>
+  <p>Content: {{ object.content }}</p>
+  <p>Category: {{ object.category }}</p>
+  <!-- Дополнительные поля и информация о объявлении -->
+{% endblock %}

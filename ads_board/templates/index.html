@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+
+{% load i18n %}
+{% load tz %}
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>{% block title %}{% endblock title %}</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
+
+    <style>
+        body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan
+        {% else %} powderblue {% endif %};}
+    </style>
+</head>
+<body>
+<header>
+    <h1>My Website</h1>
+    <nav>
+        <ul>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'accounts:login' %}">Login</a></li>
+            <li><a href="{% url 'accounts:register' %}">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <p>© 2023 My Website. All rights reserved.</p>
+</footer>
+</body>
+</html>
