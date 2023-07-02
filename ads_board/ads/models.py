@@ -13,7 +13,6 @@
 """
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from accounts.models import CustomUser
 
@@ -91,8 +90,8 @@ class Advert(models.Model):
         return f'/{self.id}'
 
     class Meta:
-        verbose_name = _("Advert")
-        verbose_name_plural = _("Adverts")
+        verbose_name = 'Объявление'
+        verbose_name_plural = 'Объявления'
 
 
 class Response(models.Model):
@@ -123,20 +122,20 @@ class Response(models.Model):
     user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
                              related_name='responses',
-                             verbose_name=_('User'))
+                             verbose_name='User')
     # Внешний ключ, связывающий отклик с объявлением
     article = models.ForeignKey(Advert,
                                 on_delete=models.CASCADE,
                                 related_name='responses',
-                                verbose_name=_('Article'))
+                                verbose_name='Article')
     # Поле для содержания текста отклика
-    response_text = models.TextField(verbose_name=_('Response text'))
+    response_text = models.TextField(verbose_name='Response text')
     # Поле для хранения даты и времени создания отклика
     created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('Created at'))
+                                      verbose_name='Created at')
     # Поле, указывающее, был ли отклик принят
     status = models.BooleanField(default=False,
-                                 verbose_name=_('Is accepted'))
+                                 verbose_name='Is accepted')
 
     def __str__(self):
         # Возвращает строковое представление отклика
@@ -153,8 +152,8 @@ class Response(models.Model):
         self.save()
 
     class Meta:
-        verbose_name = _('Response')
-        verbose_name_plural = _('Responses')
+        verbose_name = 'Отклик'
+        verbose_name_plural = 'Отклики'
 
 
 class Category(models.Model):
@@ -169,12 +168,6 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
-
-def some_method(self):
-    from accounts.models import CustomUser
-
-    # Использование CustomUser здесь
-    users = CustomUser.objects.all()
-    pass
