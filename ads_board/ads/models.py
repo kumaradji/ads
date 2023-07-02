@@ -70,8 +70,8 @@ class Advert(models.Model):
                                 max_length=20,
                                 choices=CATEGORY_CHOICES,
                                 default='Tanks')
+    # Поле для содержания текста отклика
     response_text = models.TextField(blank=True)
-
     # Поле для хранения даты и времени создания объявления
     created_at = models.DateTimeField(auto_now_add=True)
     # Поле указывающее куда загружать контент видео или картинку
@@ -81,6 +81,14 @@ class Advert(models.Model):
 
     def __str__(self):
         return self.title
+
+    # превью объявления, мы взяли часть текста (первые 120 символа) и прибавили многоточие в конце
+    def preview(self):
+        return self.content[0:120] + '...'
+
+    # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу со списком объявлений
+    def get_absolute_url(self):
+        return f'/{self.id}'
 
     class Meta:
         verbose_name = _("Advert")

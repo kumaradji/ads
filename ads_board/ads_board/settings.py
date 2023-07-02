@@ -29,6 +29,14 @@ ALLOWED_HOSTS = []
 
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 
+APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_apscheduler',
 
     'allauth',
     'allauth.account',
@@ -66,9 +75,52 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+DEFAULT_FROM_EMAIL = 'Ku79313081435@yandex.ru'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'Ku79313081435'
+EMAIL_HOST_PASSWORD = "uqrzdvykymqssmky"
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# mandatory — не пускать пользователя на сайт до момента подтверждения почты
+# optional — сообщение о подтверждении почты будет отправлено,
+# но пользователь может залогиниться на сайте без подтверждения почты
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+# Указали форму для дополнительной обработки регистрации пользователя
+# позволит избежать дополнительного входа
+# и активирует аккаунт сразу, как только мы перейдём по ссылке
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+# хранит количество дней, когда доступна ссылка на подтверждение регистрации
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 10
+# работоспособность этих параметров или получить другой ключ
+# EMAIL_HOST_PASSWORD = os.getenv('DEFAULT_FROM_EMAIL')
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# # mandatory — не пускать пользователя на сайт до момента подтверждения почты
+# # optional — сообщение о подтверждении почты будет отправлено,
+# # но пользователь может залогиниться на сайте без подтверждения почты
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# # Указали форму для дополнительной обработки регистрации пользователя
+# # позволит избежать дополнительного входа
+# # и активирует аккаунт сразу, как только мы перейдём по ссылке
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+# хранит количество дней, когда доступна ссылка на подтверждение регистрации
+# ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 10
+# Настройки почты отправляется на консоль
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Настройки почты отправляется на реальный почтовый ящик
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+ADMINS = (
+    ('Кумар', 'kumaradji@me.com'),
+)
+
 ROOT_URLCONF = 'ads_board.urls'
 
 SITE_ID = 1
+SITE_URL = 'http://127.0.0.1:8000'
 
 
 TEMPLATES = [

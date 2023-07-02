@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-
+{% block title %} Написать объявление {% endblock %}
 {% block content %}
   <h1>Create Advert</h1>
   <form method="post" action="{% url 'ads:advert-create' %}">
