@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -16,6 +16,18 @@ class SignUp(CreateView):
     template_name = 'accounts/signup.html'
 
     def form_valid(self, form):
+        email = form.cleaned_data['email']
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password1']
+
+        # Проверяем, существует ли пользователь с таким email-адресом
+        if get_user_model().objects.filter(email=email).exists():
+            form.add_error('email', 'Пользователь с таким Email address уже существует.')
+            return self.form_invalid(form)
+
+        # Создаем нового пользователя
+        user = get_user_model().objects.create_user(email=email, username=username, password=password)
+
         form.save()
         return redirect('profile')
 
@@ -58,4 +70,3 @@ class LogoutView(View):
     def post(self, request):
         logout(request)
         return redirect('accounts:login')
-
