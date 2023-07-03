@@ -1,8 +1,10 @@
 import pytz
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from datetime import datetime
 from .filters import AdvertFilter
+from .forms import PostForm
 from .models import Advert, Response
 
 
@@ -30,16 +32,28 @@ class AdvertListView(LoginRequiredMixin, ListView):
         return context
 
 
-class AdvertCreateView(LoginRequiredMixin, CreateView):
+class AdvertCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    raise_exception = True
+    permission_required = 'ads.add_post'
+    form_class = PostForm
     model = Advert
-    fields = ['title', 'content', 'category', 'upload']
+    # fields = ['title', 'content', 'category', 'upload']
     template_name = 'ads/advert_create.html'
     success_url = ''
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.user = self.request.user
+        post = form.save(commit=False)
+        post.is_news = True
+        post.author = self.request.user.author
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post', kwargs={'pk': self.object.pk})
+
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     form.instance.user = self.request.user
+    #     return super().form_valid(form)
 
 
 class AdvertDetailView(DetailView):

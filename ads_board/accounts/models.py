@@ -73,9 +73,22 @@
  пользователей на вашем сайте.
 """
 
-
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
+
+
+# Модель, содержащая объекты всех авторов
+class Author(models.Model):
+    # связь «один к одному» с встроенной моделью пользователей User;
+    author = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Автор'
+        verbose_name_plural = 'Авторы'
+
+    #  функция, которая говорит, как лучше вывести объект в админ панель
+    def __str__(self):
+        return f'{self.authorUser}'
 
 
 # Модель `CustomUserManager` отвечает за создание и сохранение
@@ -162,5 +175,3 @@ class CustomUser(AbstractBaseUser):
     def get_subscribed_categories(self):
         # Возвращает список категорий, на которые пользователь подписан
         return self.subscribed_categories.all()
-
-

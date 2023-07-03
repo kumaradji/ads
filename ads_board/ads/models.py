@@ -14,7 +14,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Author
 
 
 class Advert(models.Model):
@@ -55,10 +55,8 @@ class Advert(models.Model):
         ('Spellmasters', 'Мастера заклинаний'),
     ]
 
-    # Поле для имени автора объявления
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
     # Внешний ключ, связывающий объявление с пользователем
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE,
+    user = models.ForeignKey(Author, on_delete=models.CASCADE,
                              related_name='advert')
     # Поле для содержания и текста объявления
     content = models.TextField(verbose_name="Content")
