@@ -33,7 +33,6 @@ class CustomUser(AbstractBaseUser):
 
 
 class Author(models.Model):
-    # author = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     author = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='author')
 
     class Meta:
@@ -42,3 +41,4 @@ class Author(models.Model):
 
     def __str__(self):
         return f'{self.author}'
+

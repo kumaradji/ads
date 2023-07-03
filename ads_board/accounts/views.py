@@ -7,12 +7,13 @@ from django.views import View
 from django.views.generic.edit import CreateView
 
 from .forms import RegistrationForm, LoginForm
+from .models import CustomUser
 
 
 class SignUp(CreateView):
-    model = User
+    model = CustomUser
     form_class = RegistrationForm
-    success_url = '/accounts/signup'
+    success_url = '/accounts/profile'  # Обновленный URL для перенаправления на страницу профиля
     template_name = 'accounts/signup.html'
 
     def form_valid(self, form):
@@ -28,14 +29,11 @@ class SignUp(CreateView):
         # Создаем нового пользователя
         user = get_user_model().objects.create_user(email=email, username=username, password=password)
 
-        form.save()
-        return redirect('profile')
+        return super().form_valid(form)
 
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        # Здесь можно добавить логику для получения информации о профиле пользователя
-        # Например:
         user = request.user
         context = {
             'user': user
