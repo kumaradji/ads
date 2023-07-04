@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
 
@@ -13,7 +14,7 @@ from .models import CustomUser
 class SignUp(CreateView):
     model = CustomUser
     form_class = RegistrationForm
-    success_url = '/accounts/profile'  # Обновленный URL для перенаправления на страницу профиля
+    success_url = '/accounts/profile/'
     template_name = 'accounts/signup.html'
 
     def form_valid(self, form):
@@ -27,7 +28,11 @@ class SignUp(CreateView):
             return self.form_invalid(form)
 
         # Создаем нового пользователя
-        user = get_user_model().objects.create_user(email=email, username=username, password=password)
+        user = get_user_model().objects.create_user(
+            email=email,
+            username=username,
+            password=password
+        )
 
         return super().form_valid(form)
 
