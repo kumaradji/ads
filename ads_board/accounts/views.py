@@ -14,7 +14,7 @@ class SignUp(CreateView):
     model = get_user_model()
     form_class = RegistrationForm
     template_name = 'accounts/signup.html'
-    success_url = reverse_lazy('profile')
+    success_url = '/accounts/profile/'
 
     def form_valid(self, form):
         user = form.save()
@@ -60,7 +60,7 @@ class LoginView(View):
                 login(request, user)
                 return redirect('profile')
             form.add_error(None, 'Неверные имя пользователя или пароль.')
-        return render(request, 'accounts/login.html', {'form': form})
+        return render(request, 'accounts/profile.html', {'form': form})
 
 
 class LogoutView(View):

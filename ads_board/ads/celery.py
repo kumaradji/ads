@@ -4,7 +4,7 @@ from celery.schedules import crontab
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ads_board.settings')
 
-app = Celery('news_portal')
+app = Celery('ads_board')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
