@@ -7,10 +7,11 @@
   <p>Имя пользователя: {{ user.username }}</p>
   <p>Email: {{ user.email }}</p>
 
-  {% if user.is_author %}
+  {% if user.customuser.is_author %}
+
     <p>Статус: Автор</p>
   {% else %}
-    <form method="post" action="{% url 'profile' %}">
+      <form method="post" action="{% url 'accounts:profile' %}">
       {% csrf_token %}
       <button type="submit">Стать автором</button>
     </form>

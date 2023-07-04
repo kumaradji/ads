@@ -1,10 +1,9 @@
-from django import forms
-from django.contrib.auth import login, logout, authenticate, get_user_model
+from django.contrib.auth import login, logout, authenticate, get_user_model, models
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic.edit import CreateView
 
@@ -18,18 +17,11 @@ class SignUp(CreateView):
     success_url = reverse_lazy('profile')
 
     def form_valid(self, form):
-        # Добавляем пользователя в группу "Пользователи" по умолчанию
-        response = super().form_valid(form)
         user = form.save()
-        group = Group.objects.get(name='Пользователи')
-        user.groups.add(group)
-
-        # Если пользователь хочет стать автором, то добавляем его в группу "Авторы"
-        if form.cleaned_data['become_author']:
-            author_group = Group.objects.get(name='Авторы')
-            user.groups.add(author_group)
-
-        return response
+        group = Group.objects.get_or_create(name='Пользователи')[0]
+        user.groups.add(group)  # добавляем нового пользователя в эту группу
+        user.save()
+        return super().form_valid(form)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -41,15 +33,16 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, 'accounts/profile.html', context)
 
     def post(self, request):
+        User = get_user_model()
         user = request.user
 
         if not user.is_author:
-            author_group = Group.objects.get(name='Авторы')
+            author_group = models.Group.objects.get(name='Авторы')
             user.groups.add(author_group)
-            user.is_author = True
-            user.save()
+            user.customuser.is_author = True
+            user.customuser.save()
 
-        return redirect('accounts:profile')
+        return redirect('profile')
 
 
 class LoginView(View):
@@ -79,3 +72,19 @@ class LogoutView(View):
     def post(self, request):
         logout(request)
         return redirect('accounts:login')
+
+
+@login_required
+def profile(request):
+    user = request.user
+
+    if not user.groups.filter(name='Авторы').exists():
+        author_group = Group.objects.get(name='Авторы')
+        user.groups.add(author_group)
+        user.is_author = True
+        user.save()
+
+    context = {
+        'user': user
+    }
+    return render(request, 'accounts/profile.html', context)

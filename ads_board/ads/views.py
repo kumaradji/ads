@@ -10,12 +10,9 @@ from .models import Advert, Response
 # Представление для главной страницы
 class AdvertListView(LoginRequiredMixin, ListView):
     model = Advert
-    # указываем способ сортировки
     ordering = '-created_at'
-    # указываем шаблон представления
     template_name = 'ads/advert_list.html'
-    # указываем переменную, которую будем использовать в шаблоне news.html
-    context_object_name = 'advert-list'
+    context_object_name = 'advert_list'  # Исправленное имя переменной контекста
     paginate_by = 6
 
     def get_queryset(self):
@@ -23,7 +20,6 @@ class AdvertListView(LoginRequiredMixin, ListView):
         self.filterset = AdvertFilter(self.request.GET, queryset)
         return self.filterset.qs
 
-    # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.utcnow()
