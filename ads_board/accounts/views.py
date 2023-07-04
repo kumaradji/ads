@@ -1,40 +1,35 @@
+from django import forms
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
 
 from .forms import RegistrationForm, LoginForm
-from .models import CustomUser
 
 
 class SignUp(CreateView):
-    model = CustomUser
+    model = get_user_model()
     form_class = RegistrationForm
-    success_url = '/accounts/profile/'
     template_name = 'accounts/signup.html'
+    success_url = reverse_lazy('profile')
 
     def form_valid(self, form):
-        email = form.cleaned_data['email']
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password1']
+        # Добавляем пользователя в группу "Пользователи" по умолчанию
+        response = super().form_valid(form)
+        user = form.save()
+        group = Group.objects.get(name='Пользователи')
+        user.groups.add(group)
 
-        # Проверяем, существует ли пользователь с таким email-адресом
-        if get_user_model().objects.filter(email=email).exists():
-            form.add_error('email', 'Пользователь с таким Email address уже существует.')
-            return self.form_invalid(form)
+        # Если пользователь хочет стать автором, то добавляем его в группу "Авторы"
+        if form.cleaned_data['become_author']:
+            author_group = Group.objects.get(name='Авторы')
+            user.groups.add(author_group)
 
-        # Создаем нового пользователя
-        user = get_user_model().objects.create_user(
-            email=email,
-            username=username,
-            password=password
-        )
-
-        return super().form_valid(form)
+        return response
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -44,6 +39,17 @@ class ProfileView(LoginRequiredMixin, View):
             'user': user
         }
         return render(request, 'accounts/profile.html', context)
+
+    def post(self, request):
+        user = request.user
+
+        if not user.is_author:
+            author_group = Group.objects.get(name='Авторы')
+            user.groups.add(author_group)
+            user.is_author = True
+            user.save()
+
+        return redirect('accounts:profile')
 
 
 class LoginView(View):
@@ -59,7 +65,7 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('accounts:profile')
+                return redirect('profile')
             form.add_error(None, 'Неверные имя пользователя или пароль.')
         return render(request, 'accounts/login.html', {'form': form})
 

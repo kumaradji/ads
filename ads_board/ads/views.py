@@ -36,23 +36,19 @@ class AdvertCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'ads.add_post'
     form_class = PostForm
     model = Advert
-    fields = ['title', 'content', 'category', 'upload']
     template_name = 'ads/advert_create.html'
     success_url = ''
 
     def form_valid(self, form):
-        post = form.save(commit=False)
-        post.is_news = True
-        post.author = self.request.user.author
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('post', kwargs={'pk': self.object.pk})
-
-    def form_valid(self, form):
+        advert = form.save(commit=False)
+        advert.user = self.request.user
+        advert.save()
         form.instance.author = self.request.user
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('ads:advert-detail', kwargs={'pk': self.object.pk})
 
 
 class AdvertDetailView(DetailView):

@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from accounts.models import CustomUser, Author
+from accounts.models import CustomUser
+from ads_board import settings
 
 
 class Advert(models.Model):
@@ -21,8 +22,7 @@ class Advert(models.Model):
     ]
 
     # Внешний ключ, связывающий объявление с пользователем
-    user = models.ForeignKey(Author, on_delete=models.CASCADE,
-                             related_name='advert')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='advert')
     # Поле для содержания и текста объявления
     content = models.TextField(verbose_name="Content")
     # Поле для заголовка объявления

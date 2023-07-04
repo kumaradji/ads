@@ -22,7 +22,7 @@ class CustomUser(AbstractBaseUser):
     email = models.EmailField(verbose_name="Email address", max_length=255, unique=True)
     username = models.CharField(verbose_name="Username", max_length=30, unique=True)
     subscribed_categories = models.ManyToManyField('ads.Category', related_name='subscribers', blank=True)
-
+    is_author = models.BooleanField(default=False)
     # Менеджер пользователей
     objects = CustomUserManager()
 
@@ -30,15 +30,4 @@ class CustomUser(AbstractBaseUser):
 
     def __str__(self):
         return self.username
-
-
-class Author(models.Model):
-    author = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='author')
-
-    class Meta:
-        verbose_name = 'Автор'
-        verbose_name_plural = 'Авторы'
-
-    def __str__(self):
-        return f'{self.author}'
 

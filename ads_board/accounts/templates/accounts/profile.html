@@ -7,8 +7,13 @@
   <p>Имя пользователя: {{ user.username }}</p>
   <p>Email: {{ user.email }}</p>
 
-  <h2>Личные данные</h2>
-  <p>Имя: {{ user.first_name }}</p>
-  <p>Фамилия: {{ user.last_name }}</p>
-  <!-- Дополнительные поля личных данных -->
+  {% if user.is_author %}
+    <p>Статус: Автор</p>
+  {% else %}
+    <form method="post" action="{% url 'profile' %}">
+      {% csrf_token %}
+      <button type="submit">Стать автором</button>
+    </form>
+  {% endif %}
+
 {% endblock %}

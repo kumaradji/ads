@@ -1,10 +1,10 @@
 {% extends 'index.html' %}
 {% block title %} Написать объявление {% endblock %}
 {% block content %}
-  <h1>Create Advert</h1>
+  <h1>Написать объявление</h1>
   <form method="post" action="{% url 'ads:advert-create' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create</button>
+    <button type="submit">Отправить</button>
   </form>
 {% endblock %}
