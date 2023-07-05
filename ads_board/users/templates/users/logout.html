@@ -2,7 +2,7 @@
 {% block title %}Выход{% endblock %}
 {% block content %}
   <h1>Выход</h1>
-  <form method="post" action="{% url 'accounts:logout' %}">
+  <form method="post" action="{% url 'users:logout' %}">
     {% csrf_token %}
     <!-- Форма выхода -->
     <p>Вы уверены, что хотите выйти?</p>

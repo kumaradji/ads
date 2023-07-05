@@ -26,7 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+ACCOUNT_FORMS = {"signup": "users.forms.CustomSignupForm"}
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'ads.apps.AdsConfig',
-    'accounts.apps.AccountsConfig'
+    'users.apps.AccountsConfig'
 ]
 
 MIDDLEWARE = [
@@ -112,7 +112,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'accounts/templates'),
+                 os.path.join(BASE_DIR, 'users/templates'),
                  os.path.join(BASE_DIR, 'ads/templates'),
                  ],
         'APP_DIRS': True,

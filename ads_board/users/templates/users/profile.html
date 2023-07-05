@@ -11,7 +11,7 @@
 
     <p>Статус: Автор</p>
   {% else %}
-      <form method="post" action="{% url 'accounts:profile' %}">
+      <form method="post" action="{% url 'users:profile' %}">
       {% csrf_token %}
       <button type="submit">Стать автором</button>
     </form>

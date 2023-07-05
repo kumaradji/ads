@@ -13,8 +13,8 @@ from .forms import RegistrationForm, LoginForm
 class SignUp(CreateView):
     model = get_user_model()
     form_class = RegistrationForm
-    template_name = 'accounts/signup.html'
-    success_url = '/accounts/profile/'
+    template_name = 'users/signup.html'
+    success_url = '/users/profile/'
 
     def form_valid(self, form):
         user = form.save()
@@ -30,7 +30,7 @@ class ProfileView(LoginRequiredMixin, View):
         context = {
             'user': user
         }
-        return render(request, 'accounts/profile.html', context)
+        return render(request, 'users/profile.html', context)
 
     def post(self, request):
         user = request.user
@@ -47,7 +47,7 @@ class ProfileView(LoginRequiredMixin, View):
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
-        return render(request, 'accounts/login.html', {'form': form})
+        return render(request, 'users/login.html', {'form': form})
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -57,20 +57,20 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None and user.is_staff:
                 login(request, user)
-                return redirect('profile')
+                return redirect(reverse('profile'))  # Изменяем перенаправление на URL-шаблон 'profile'
             form.add_error(None, 'Неверные имя пользователя или пароль.')
-        return render(request, 'accounts/profile.html', {'form': form})
+        return render(request, 'users/login.html', {'form': form})  # Возвращаем шаблон login.html при ошибке
 
 
 class LogoutView(View):
     @login_required
     def get(self, request):
         logout(request)
-        return redirect('accounts:login')
+        return redirect('users:login')
 
     def post(self, request):
         logout(request)
-        return redirect('accounts:login')
+        return redirect('users:login')
 
 
 @login_required
@@ -86,4 +86,4 @@ def profile(request):
     context = {
         'user': user
     }
-    return render(request, 'accounts/profile.html', context)
+    return render(request, 'users/profile.html', context)

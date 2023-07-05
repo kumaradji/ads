@@ -5,7 +5,7 @@
 # from django.dispatch import receiver
 # from django.core.mail import send_mail
 #
-# from accounts.models import CustomUser, Author
+# from users.models import CustomUser, Author
 #
 #
 # # Отправка сигнала когда появляется объявления в первый раз
