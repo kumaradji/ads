@@ -7,7 +7,7 @@
   <p>Имя пользователя: {{ user.username }}</p>
   <p>Email: {{ user.email }}</p>
 
-  {% if user.customuser.is_author %}
+  {% if user.is_staff %}
 
     <p>Статус: Автор</p>
   {% else %}

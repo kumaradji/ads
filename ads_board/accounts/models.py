@@ -25,7 +25,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser):
     email = models.EmailField(verbose_name="Email address", max_length=255, unique=True)
     username = models.CharField(verbose_name="Username", max_length=30, unique=True)
-    is_author = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     subscribed_categories = models.ManyToManyField('ads.Category', related_name='subscribers', blank=True)
     # Менеджер пользователей
     objects = CustomUserManager()

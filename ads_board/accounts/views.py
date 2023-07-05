@@ -33,14 +33,13 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, 'accounts/profile.html', context)
 
     def post(self, request):
-        User = get_user_model()
         user = request.user
 
-        if not user.is_author:
+        if not user.is_staff:
             author_group = models.Group.objects.get(name='Авторы')
             user.groups.add(author_group)
-            user.customuser.is_author = True
-            user.customuser.save()
+            user.is_staff = True
+            user.save()
 
         return redirect('profile')
 
@@ -56,7 +55,7 @@ class LoginView(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
-            if user is not None:
+            if user is not None and user.is_staff:
                 login(request, user)
                 return redirect('profile')
             form.add_error(None, 'Неверные имя пользователя или пароль.')

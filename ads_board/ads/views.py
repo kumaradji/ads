@@ -33,7 +33,7 @@ class AdvertCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Advert
     template_name = 'ads/advert_create.html'
-    success_url = ''
+    success_url = 'ads/advert/<int:pk>/'
 
     def form_valid(self, form):
         advert = form.save(commit=False)
@@ -54,12 +54,12 @@ class AdvertDetailView(DetailView):
 
 class ResponseCreateView(LoginRequiredMixin, CreateView):
     model = Response
-    fields = ['response_text']
+    fields = ['author', 'response_text']
     template_name = 'ads/response_create.html'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.user = self.request.user.customuser
+        form.instance.user = self.request.user
         form.instance.article = Advert.objects.get(pk=self.kwargs['pk'])
         return super().form_valid(form)
 
