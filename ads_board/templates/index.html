@@ -7,8 +7,6 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
     <title>{% block title %}{% endblock title %}</title>
     <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 
@@ -16,12 +14,51 @@
         body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan
         {% else %} powderblue {% endif %};}
     </style>
+
+
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container-fluid justify-content-center">
+        <a class="nav-link" href="/ads">Все объявления</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/subscriptions/">Подписка</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/news/search">Поиск</a>
+                </li>
+                {% if user.username %}
+                <li class="nav-item">
+                    <a href="{% url 'users:logout' %}">Выйти</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Вы вошли как {{ user.username }}</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'users:login' %}">Войти</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <main>
-    {% block content %}
-    {% endblock %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-16 text-center">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
+    </div>
 </main>
 
 <footer>

@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <h1>Отклики на ваши объявления</h1>
+  {% if responses %}
+    <ul>
+      {% for response in responses %}
+        <li>
+          <h2>{{ response.article.title }}</h2>
+          <p>{{ response.response_text }}</p>
+          <p>Status: {% if response.status %}Accepted{% else %}Rejected{% endif %}</p>
+          <form method="post" action="{% url 'delete_response' response.pk %}">
+            {% csrf_token %}
+            <button type="submit" name="delete">Удалить</button>
+            {% if not response.status %}
+              <button type="submit" name="accept">Принять</button>
+              <button type="submit" name="reject">Отклонить</button>
+            {% endif %}
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>У вас пока нет откликов на объявления.</p>
+  {% endif %}
+{% endblock %}

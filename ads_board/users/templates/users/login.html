@@ -3,16 +3,18 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-  <h1>Вход</h1>
-  <form method="post" action="{% url 'users:login' %}">
+<h1>Вход</h1>
+<form method="post" action="{% url 'users:login' %}">
     {% csrf_token %}
     <!-- Форма входа -->
     <label for="username">Имя пользователя:</label>
     <input type="text" id="username" name="username">
 
     <label for="password">Пароль:</label>
-    <input type="password" id="password" name="password">
+    <input type="password" name="password" required>
 
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
     <button type="submit">Войти</button>
-  </form>
+
+</form>
 {% endblock %}

@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-163d80x4^awgj$(h1$76-lgo)bj%9e6rwiyxyk-emi_4@*9o95
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 ACCOUNT_FORMS = {"signup": "users.forms.CustomSignupForm"}
 

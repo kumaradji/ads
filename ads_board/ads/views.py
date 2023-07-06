@@ -1,7 +1,12 @@
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from datetime import datetime
+
 from .filters import AdvertFilter
 from .forms import PostForm
 from .models import Advert, Response
@@ -67,3 +72,26 @@ class ResponseCreateView(LoginRequiredMixin, CreateView):
 class ResponseDetailView(DetailView):
     model = Response
     template_name = 'ads/response_detail.html'
+
+
+class PrivatePageView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        adverts = Advert.objects.filter(user=user)
+        responses = Response.objects.filter(advert__in=adverts)
+        return render(request, 'ads/private_page.html', {'responses': responses})
+
+
+class AcceptResponseView(LoginRequiredMixin, View):
+    def get(self, request, response_id):
+        response = Response.objects.get(pk=response_id)
+        response.accepted = True
+        response.save()
+        return redirect('ads:private')
+
+
+class DeleteResponseView(LoginRequiredMixin, View):
+    def get(self, request, response_id):
+        response = Response.objects.get(pk=response_id)
+        response.delete()
+        return redirect('ads:private')
