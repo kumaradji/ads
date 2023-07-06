@@ -24,9 +24,17 @@ SECRET_KEY = 'django-insecure-163d80x4^awgj$(h1$76-lgo)bj%9e6rwiyxyk-emi_4@*9o95
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
+LOGIN_REDIRECT_URL = "/ads"
+LOGOUT_REDIRECT_URL = "/users/login/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/users/login/"
 ACCOUNT_FORMS = {"signup": "users.forms.CustomSignupForm"}
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
@@ -36,7 +44,6 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
 
 # Application definition
 
@@ -82,10 +89,13 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'Ku79313081435'
 EMAIL_HOST_PASSWORD = "uqrzdvykymqssmky"
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ADMINS = (
+    ('Кумар', 'kumaradji@me.com'),
+)
+MANAGERS = (
+    ('Кумар', 'kumaradji@gmail.com'),
+)
+
 # mandatory — не пускать пользователя на сайт до момента подтверждения почты
 # optional — сообщение о подтверждении почты будет отправлено,
 # но пользователь может залогиниться на сайте без подтверждения почты
@@ -97,10 +107,6 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 10
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Настройки почты отправляется на реальный почтовый ящик
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-ADMINS = (
-    ('Кумар', 'kumaradji@me.com'),
-)
 
 ROOT_URLCONF = 'ads_board.urls'
 

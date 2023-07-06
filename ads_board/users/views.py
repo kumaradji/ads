@@ -1,7 +1,8 @@
+from allauth.account.forms import LoginForm
 from django.contrib.auth import login, logout, authenticate, get_user_model, models
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DeleteView
@@ -10,23 +11,17 @@ from django.views import View
 from django.views.generic.edit import CreateView
 from users.models import CustomUser
 
-from .forms import RegistrationForm, LoginForm
-
 from ads.models import Advert, Response
+
+from django.views.generic.edit import CreateView
+from .forms import CustomSignupForm
 
 
 class SignUp(CreateView):
-    model = get_user_model()
-    form_class = RegistrationForm
-    template_name = 'users/signup.html'
-    success_url = '/ads/'  # Изменяем URL-шаблон на страницу со списком объявлений
-
-    def form_valid(self, form):
-        user = form.save()
-        group = Group.objects.get_or_create(name='Пользователи')[0]
-        user.groups.add(group)  # добавляем нового пользователя в эту группу
-        user.save()
-        return super().form_valid(form)
+    model = User
+    form_class = CustomSignupForm
+    success_url = '/accounts/login'
+    template_name = 'registration/signup.html'
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -49,35 +44,35 @@ class ProfileView(LoginRequiredMixin, View):
         return redirect('profile')
 
 
-class LoginView(View):
-    def get(self, request):
-        form = LoginForm()
-        return render(request, 'users/login.html', {'form': form})
-
-    def post(self, request):
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            print(f"Username: {username}")  # Отладочный вывод
-            print(f"Password: {password}")  # Отладочный вывод
-            if username and password:
-                user = authenticate(request, username=username, password=password)
-                print("User authentication successful")  # Отладочный вывод
-
-                if user is not None and user.is_active:
-                    print("User authentication successful")  # Отладочный вывод
-                    login(request, user)
-                    next_url = request.GET.get('next')
-                    if next_url:
-                        print(f"Redirecting to next URL: {next_url}")  # Отладочный вывод
-                        return redirect(next_url)
-                    else:
-                        return redirect(reverse('profile'))
-        else:
-            print("Form is invalid")  # Отладочный вывод
-        form.add_error(None, 'Неверные имя пользователя или пароль.')
-        return render(request, 'users/login.html', {'form': form})
+# class LoginView(View):
+#     def get(self, request):
+#         form = LoginForm()
+#         return render(request, 'users/login.html', {'form': form})
+#
+#     def post(self, request):
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+#             print(f"Username: {username}")  # Отладочный вывод
+#             print(f"Password: {password}")  # Отладочный вывод
+#             if username and password:
+#                 user = authenticate(request, username=username, password=password)
+#                 print("User authentication successful")  # Отладочный вывод
+#
+#                 if user is not None and user.is_active:
+#                     print("User authentication successful")  # Отладочный вывод
+#                     login(request, user)
+#                     next_url = request.GET.get('next')
+#                     if next_url:
+#                         print(f"Redirecting to next URL: {next_url}")  # Отладочный вывод
+#                         return redirect(next_url)
+#                     else:
+#                         return redirect(reverse('profile'))
+#         else:
+#             print("Form is invalid")  # Отладочный вывод
+#         form.add_error(None, 'Неверные имя пользователя или пароль.')
+#         return render(request, 'users/login.html', {'form': form})
 
 
 class LogoutView(LogoutView):
