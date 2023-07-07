@@ -18,7 +18,7 @@ class Advert(models.Model):
         ('Spellmasters', 'Мастера заклинаний'),
     ]
 
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='advert')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='advert')
     content = models.TextField(verbose_name="Content")
     title = models.CharField(verbose_name="Title", max_length=100)
     category = models.CharField(verbose_name="Category",
