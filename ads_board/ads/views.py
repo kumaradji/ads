@@ -94,3 +94,17 @@ class DeleteResponseView(LoginRequiredMixin, View):
         response = Response.objects.get(pk=response_id)
         response.delete()
         return redirect('ads:private')
+
+
+class LikeView(View):
+    def post(self, request, pk):
+        response = Response.objects.get(pk=pk)
+        response.like()
+        return redirect('ads:like', response_id=pk)
+
+
+class DislikeView(View):
+    def post(self, request, pk):
+        response = Response.objects.get(pk=pk)
+        response.dislike()
+        return redirect('ads:dislike', response_id=pk)

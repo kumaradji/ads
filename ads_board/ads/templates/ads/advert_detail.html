@@ -1,9 +1,25 @@
 {% extends 'index.html' %}
-{% block title %}  Детали объявления {% endblock %}
+
+{% block title %}Детали объявления{% endblock %}
+
 {% block content %}
   <h1>Детали объявления</h1>
   <h2>{{ object.title }}</h2>
   <p>Content: {{ object.content }}</p>
   <p>Category: {{ object.category }}</p>
   <!-- Дополнительные поля и информация о объявлении -->
+
+  <!-- Кнопки лайк, дизлайк и отзыв -->
+  <form action="{% url 'ads:like' pk=object.pk %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Лайк</button>
+  </form>
+
+  <form action="{% url 'ads:dislike' pk=object.pk %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Дизлайк</button>
+  </form>
+
+  <a href="{% url 'ads:response-create' pk=object.pk %}">Отзыв на объявление</a>
+
 {% endblock %}
