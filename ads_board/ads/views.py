@@ -1,11 +1,10 @@
+from datetime import datetime
+
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-from datetime import datetime
 
 from .filters import AdvertFilter
 from .forms import PostForm
@@ -17,7 +16,7 @@ class AdvertListView(LoginRequiredMixin, ListView):
     model = Advert
     ordering = '-created_at'
     template_name = 'ads/advert_list.html'
-    context_object_name = 'advert_list'  # Исправленное имя переменной контекста
+    context_object_name = 'advert_list'
     paginate_by = 6
 
     def get_queryset(self):

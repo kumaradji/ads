@@ -4,13 +4,11 @@ from celery.schedules import crontab
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ads_board.settings')
 
-app = Celery('ads_board')
+app = Celery('ads')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
 
-# рассылка подписчикам списка публикаций за неделю
-# каждый понедельник в 8:00 через tasks.py
 app.conf.beat_schedule = {
     'send_email_every_monday_8am': {
         'task': 'ads.tasks.send_email',

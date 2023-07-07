@@ -1,18 +1,26 @@
-from django.contrib.auth import login, logout, authenticate, get_user_model, models
+from django.contrib.auth import login, authenticate, get_user_model, models
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DeleteView
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
-from users.models import CustomUser
 
 from .forms import RegistrationForm, LoginForm
+from ads.tasks.tasks import send_registration_email
+from ads.models import Response
+import random
+import string
 
-from ads.models import Advert, Response
+
+def generate_confirmation_code():
+    """Генерирует случайный код подтверждения."""
+    code_length = 6
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(code_length))
 
 
 class SignUp(CreateView):
@@ -26,7 +34,10 @@ class SignUp(CreateView):
         group = Group.objects.get_or_create(name='Пользователи')[0]
         user.groups.add(group)  # добавляем нового пользователя в эту группу
         user.save()
-        return super().form_valid(form)
+
+        confirmation_code = generate_confirmation_code()
+        # Запланировать задачу отправки письма с помощью Celery
+        send_registration_email.delay(user.email, confirmation_code)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -59,20 +70,16 @@ class LoginView(View):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            print(f"Username: {username}")  # Отладочный вывод
-            print(f"Password: {password}")  # Отладочный вывод
             if username and password:
                 user = authenticate(request, username=username, password=password)
-                print("User authentication successful")  # Отладочный вывод
 
                 if user is not None and user.is_active:
                     login(request, user)
                     next_url = request.GET.get('next')
                     if next_url:
-                        print(f"Redirecting to next URL: {next_url}")  # Отладочный вывод
                         return redirect(next_url)
                     else:
-                        return redirect('advert-list')  # Изменено на список объявлений
+                        return redirect('advert-list')
         else:
             print("Form is invalid")  # Отладочный вывод
         form.add_error(None, 'Неверные имя пользователя или пароль.')
