@@ -78,7 +78,7 @@ class PrivatePageView(LoginRequiredMixin, View):
         user = request.user
         adverts = Advert.objects.filter(user=user)
         responses = Response.objects.filter(advert__in=adverts)
-        return render(request, 'ads/private_page.html', {'responses': responses})
+        return render(request, 'ads/private_page.html', context={'responses': responses})
 
 
 class AcceptResponseView(LoginRequiredMixin, View):

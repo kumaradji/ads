@@ -47,10 +47,7 @@ class Advert(models.Model):
 
 class Response(models.Model):
     author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='response')
-    adertisement = models.ForeignKey(Advert,
-                                     on_delete=models.CASCADE,
-                                     related_name='response_user',
-                                     verbose_name='User')
+    advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
                              related_name='responses',
@@ -72,11 +69,11 @@ class Response(models.Model):
         self.save()
 
     def like(self):
-        self.is_accepted = True
+        self.status = True
         self.save()
 
     def dislike(self):
-        self.is_accepted = False
+        self.status = False
         self.save()
 
     class Meta:
