@@ -66,14 +66,13 @@ class LoginView(View):
                 print("User authentication successful")  # Отладочный вывод
 
                 if user is not None and user.is_active:
-                    print("User authentication successful")  # Отладочный вывод
                     login(request, user)
                     next_url = request.GET.get('next')
                     if next_url:
                         print(f"Redirecting to next URL: {next_url}")  # Отладочный вывод
                         return redirect(next_url)
                     else:
-                        return redirect(reverse('profile'))
+                        return redirect('advert-list')  # Изменено на список объявлений
         else:
             print("Form is invalid")  # Отладочный вывод
         form.add_error(None, 'Неверные имя пользователя или пароль.')
