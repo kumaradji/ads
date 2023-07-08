@@ -11,11 +11,10 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 
     <style>
-        body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan
-        {% else %} powderblue {% endif %};}
+        body {
+            background-color: lightgray;
+        }
     </style>
-
-
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
@@ -23,25 +22,22 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="/ads">Все объявления</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/news/search">Поиск</a>
-                </li>
-                {% if user.username %}
-                <li class="nav-item">
-                    <a href="{% url 'users:logout' %}">Выйти</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Вы вошли как {{ user.username }}</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a href="{% url 'users:login' %}">Войти</a>
-                </li>
-                {% endif %}
-            </ul>
+            <li class="nav-item">
+                <a class="nav-link" href="/ads">Все объявления</a>
+            </li>
+            {% if user.username %}
+            <li class="nav-item">
+                <a href="{% url 'users:logout' %}">Выйти</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/ads/private">Приватная страница {{ user.username }}</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="{% url 'users:login' %}">Войти</a>
+            </li>
+            {% endif %}
+        </ul>
         </div>
     </div>
 </nav>

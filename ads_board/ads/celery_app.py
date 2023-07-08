@@ -1,4 +1,5 @@
 import os
+
 from celery import Celery
 from celery.schedules import crontab
 
@@ -21,3 +22,12 @@ app.conf.beat_schedule = {
         'args': (),
     },
 }
+#
+# # Создание экземпляра объекта Celery
+# celery_app = Celery('my_project')
+#
+# # Настройка Celery
+# celery_app.config_from_object('django.conf:settings', namespace='CELERY')
+#
+# # Загрузка задач из приложений Django
+# celery_app.autodiscover_tasks()
