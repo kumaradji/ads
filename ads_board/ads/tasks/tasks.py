@@ -19,6 +19,16 @@ def send_registration_email(email, confirmation_code):
 
 
 @shared_task
+def send_response_email(user_email, advert_title):
+    subject = 'Отклик на объявление'
+    message = f'Вы получили отклик на объявление "{advert_title}"'
+    from_email = 'Ku79313081435@yandex.ru'
+    recipient_list = [user_email]
+
+    send_mail(subject, message, from_email, recipient_list)
+
+
+@shared_task
 def send_email():
     today = timezone.now()
     last_week = today - timezone.timedelta(days=7)

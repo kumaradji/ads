@@ -1,14 +1,16 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
 from .filters import AdvertFilter
 from .forms import PostForm
 from .models import Advert, Response
+from ads.tasks.tasks import send_email, send_registration_email
 
 
 # Представление для главной страницы
@@ -42,9 +44,14 @@ class AdvertCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         advert = form.save(commit=False)
         advert.user = self.request.user
+        advert.author = self.request.user  # Фиксация автора
         advert.save()
         form.instance.author = self.request.user
         form.instance.user = self.request.user
+
+        # Вызов задачи отправки e-mail
+        send_registration_email.delay(self.request.user.email, advert.title)
+
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -65,6 +72,10 @@ class ResponseCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.user = self.request.user
         form.instance.article = Advert.objects.get(pk=self.kwargs['pk'])
+
+        # Вызов задачи отправки e-mail
+        send_email.delay(self.request.user.email, form.instance.article.title)
+
         return super().form_valid(form)
 
 
@@ -98,13 +109,15 @@ class DeleteResponseView(LoginRequiredMixin, View):
 
 class LikeView(View):
     def post(self, request, pk):
-        response = Response.objects.get(pk=pk)
-        response.like()
-        return redirect('ads:like', response_id=pk)
+        response = get_object_or_404(Response, pk=pk)
+        response.likes += 1
+        response.save()
+        return redirect('ads:advert-detail', pk=response.article.pk)
 
 
 class DislikeView(View):
     def post(self, request, pk):
-        response = Response.objects.get(pk=pk)
-        response.dislike()
-        return redirect('ads:dislike', response_id=pk)
+        response = get_object_or_404(Response, pk=pk)
+        response.dislikes += 1
+        response.save()
+        return redirect('ads:advert-detail', pk=response.article.pk)

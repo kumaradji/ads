@@ -27,17 +27,18 @@ class SignUp(CreateView):
     model = get_user_model()
     form_class = RegistrationForm
     template_name = 'users/signup.html'
-    success_url = '/ads/'  # Изменяем URL-шаблон на страницу со списком объявлений
+    success_url = '/ads/'
 
     def form_valid(self, form):
         user = form.save()
         group = Group.objects.get_or_create(name='Пользователи')[0]
-        user.groups.add(group)  # добавляем нового пользователя в эту группу
+        user.groups.add(group)
         user.save()
 
         confirmation_code = generate_confirmation_code()
         # Запланировать задачу отправки письма с помощью Celery
         send_registration_email.delay(user.email, confirmation_code)
+        return super().form_valid(form)
 
 
 class ProfileView(LoginRequiredMixin, View):

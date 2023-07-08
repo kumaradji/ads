@@ -4,20 +4,52 @@
 
 {% block content %}
   <h1>Приватная страница</h1>
-  <h2>Отклики на ваши объявления:</h2>
-  {% if responses %}
-    <ul>
-      {% for response in responses %}
-        <li>
-          <p>Объявление: {{ response.advert.title }}</p>
-          <p>Отклик: {{ response.content }}</p>
-          <p>Статус: {% if response.accepted %}Принят{% else %}Не принят{% endif %}</p>
-          <a href="{% url 'ads:accept_response' response_id=response.id %}">Принять</a>
-          <a href="{% url 'ads:delete_response' response_id=response.id %}">Удалить</a>
-        </li>
+
+  <h2>Мои объявления</h2>
+  <ul>
+    {% for advert in adverts %}
+      <li>
+        <a href="{% url 'ads:advert-detail' pk=advert.pk %}">{{ advert.title }}</a>
+        <form action="{% url 'ads:delete-response' response_id=response.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit">Удалить отклик</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>У вас нет объявлений.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Отклики на мои объявления</h2>
+  <form action="{% url 'ads:private' %}" method="GET">
+    <label for="filter-advert">Фильтровать по объявлению:</label>
+    <select name="filter-advert" id="filter-advert">
+      <option value="">Все объявления</option>
+      {% for advert in adverts %}
+        <option value="{{ advert.pk }}" {% if advert.pk|slugify == selected_advert %}selected{% endif %}>{{ advert.title }}</option>
       {% endfor %}
-    </ul>
-  {% else %}
-    <p>Нет откликов на ваши объявления.</p>
-  {% endif %}
+    </select>
+    <button type="submit">Применить</button>
+  </form>
+
+  <ul>
+    {% for response in responses %}
+      <li>
+        <h3>{{ response.advert.title }}</h3>
+        <p>{{ response.response_text }}</p>
+        <p>Likes: {{ response.likes }}</p>
+        <p>Dislikes: {{ response.dislikes }}</p>
+        <form action="{% url 'ads:delete-response' response_id=response.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit">Удалить отклик</button>
+        </form>
+        <form action="{% url 'ads:accept-response' response_id=response.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit">Принять отклик</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>У вас нет откликов на объявления.</li>
+    {% endfor %}
+  </ul>
 {% endblock %}

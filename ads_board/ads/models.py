@@ -60,6 +60,8 @@ class Response(models.Model):
                                       verbose_name='Created at')
     status = models.BooleanField(default=False,
                                  verbose_name='Is accepted')
+    likes = models.PositiveIntegerField(default=0)
+    dislikes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f'Отклик от {self.user.username} на объявление: {self.article.title}'
