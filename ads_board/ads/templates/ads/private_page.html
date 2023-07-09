@@ -9,11 +9,15 @@
   <ul>
     {% for advert in adverts %}
       <li>
-        <a href="{% url 'ads:advert-detail' pk=advert.pk %}">{{ advert.title }}</a>
-        <form action="{% url 'ads:delete-response' response_id=response.id %}" method="POST">
+        <form action="{% url 'ads:delete-advert' pk=advert.pk %}" method="POST">
           {% csrf_token %}
-          <button type="submit">Удалить отклик</button>
+          <button type="submit">Удалить</button>
         </form>
+        <form action="{% url 'ads:update-advert' pk=advert.pk %}" method="POST">
+          {% csrf_token %}
+          <button type="submit">Изменить</button>
+        </form>
+        <a href="{% url 'ads:advert-detail' pk=advert.pk %}">{{ advert.title }}</a>
       </li>
     {% empty %}
       <li>У вас нет объявлений.</li>

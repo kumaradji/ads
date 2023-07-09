@@ -8,6 +8,7 @@ from django.views.generic import ListView, DeleteView
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
+from django.core.mail import send_mail
 
 from .forms import RegistrationForm, LoginForm
 from ads.tasks.tasks import send_registration_email
@@ -38,6 +39,15 @@ class SignUp(CreateView):
         confirmation_code = generate_confirmation_code()
         # Запланировать задачу отправки письма с помощью Celery
         send_registration_email.delay(user.email, confirmation_code)
+
+        # Отправить письмо приветствия
+        send_mail(
+            subject='Добро пожаловать в наш интернет-магазин!',
+            message=f'{user.username}, вы успешно зарегистрировались!',
+            from_email=None,  # будет использовано значение DEFAULT_FROM_EMAIL
+            recipient_list=[user.email],
+        )
+
         return super().form_valid(form)
 
 

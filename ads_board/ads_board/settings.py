@@ -39,6 +39,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
+
 CELERY_BEAT_SCHEDULE = {
     'send_email_every_monday_8am': {
         'task': 'ads.tasks.tasks.send_email',
@@ -57,12 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_apscheduler',
 
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.yandex',
     'ads.apps.AdsConfig',
     'users.apps.AccountsConfig'
 ]
@@ -85,11 +81,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-DEFAULT_FROM_EMAIL = 'Ku79313081435@yandex.ru'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'Ku79313081435'
-EMAIL_HOST_PASSWORD = "uqrzdvykymqssmky"
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
@@ -106,6 +97,17 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 10
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Настройки почты отправляется на реальный почтовый ящик
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'Ku79313081435'
+EMAIL_HOST_PASSWORD = "kymbgnyndxsxyyij"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = 'Ku79313081435@yandex.ru'
+
+SERVER_EMAIL = 'Ku79313081435@yandex.ru'
 
 ADMINS = (
     ('Кумар', 'kumaradji@me.com'),

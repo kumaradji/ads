@@ -1,7 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import models
 
 from users.models import CustomUser
+
+User = get_user_model()
 
 
 class Advert(models.Model):
@@ -46,12 +49,13 @@ class Advert(models.Model):
 
 
 class Response(models.Model):
-    author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='response')
+    author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authored_response')
     advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser,
-                             on_delete=models.CASCADE,
-                             related_name='responses',
-                             verbose_name='User')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='responses')
+    # user = models.ForeignKey(CustomUser,
+    #                          on_delete=models.CASCADE,
+    #                          related_name='responses',
+    #                          verbose_name='User')
     article = models.ForeignKey(Advert,
                                 on_delete=models.CASCADE,
                                 related_name='responses')

@@ -7,8 +7,8 @@
   <h2>{{ object.title }}</h2>
   <p>Content: {{ object.content }}</p>
   <p>Category: {{ object.category }}</p>
-  <p>Author: {{ object.author }}</p>  <!-- Добавлено отображение автора объявления -->
+  <p>Author: {{ object.user }}</p>  <!-- Добавлено отображение автора объявления -->
 
-  <a href="{% url 'ads:response-create' pk=object.pk %}">Отзыв на объявление</a>
+  <a href="{% url 'ads:response-create' pk=object.pk %}">Отклик на объявление</a>
 
 {% endblock %}

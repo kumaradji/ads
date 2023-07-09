@@ -2,6 +2,7 @@
 
 {% block title %}Объявления{% endblock %}
 
+    <p>Текущее время: {{ time_now }}</p>
 {% block content %}
     <h1>Объявления</h1>
 
@@ -19,7 +20,6 @@
         <p>Вы автор объявлений.</p>
     {% endif %}
 
-    <p>Текущее время: {{ time_now }}</p>
 
     {% if page_obj.has_previous %}
         <a href="?page=1">1</a>
