@@ -4,13 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views import View
 
 from .filters import AdvertFilter
 from .forms import PostForm
 from .models import Advert, Response
-from ads.tasks.tasks import send_email, send_registration_email, send_response_email
+from ads_board.tasks.tasks import send_registration_email, send_response_email
 
 
 # Представление для главной страницы

@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
 
 from .forms import RegistrationForm, LoginForm
-from ads.tasks.tasks import send_registration_email
+from ads_board.tasks.tasks import send_registration_email
 from ads.models import Response
 import random
 import string
