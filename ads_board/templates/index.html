@@ -8,47 +8,30 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>{% block title %}{% endblock title %}</title>
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
+    <link href="{% static 'admin/css/styles.css' %}" rel="stylesheet"/>
 
     <style>
         body {
-            background-color: lightgray;
+            background-color: lightgrey;
         }
     </style>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-    <div class="container-fluid justify-content-center">
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="/ads">Все объявления</a>
-            </li>
-            {% if user.username %}
-            <li class="nav-item">
-                <a href="{% url 'users:logout' %}">Выйти</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/ads/private">Приватная страница {{ user.username }}</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a href="{% url 'users:signup' %}">Регистрация</a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'users:login' %}">Войти</a>
-            </li>
-            {% endif %}
-        </ul>
-        </div>
-    </div>
-</nav>
+<header>
+  <a href="/ads">Все объявления</a>
+    {% if user.username %}
+                        <a href="{% url 'users:logout' %}">Выйти</a>
+                        <a class="nav-link" href="/ads/private">Приватная страница {{ user.username }}</a>
+                {% else %}
+                        <a href="{% url 'users:signup' %}">Регистрация</a>
+                        <a href="{% url 'users:login' %}">Войти</a>
+                {% endif %}
+</header>
 
 <main>
     <div class="container">
         <div class="row">
-            <div class="col-lg-16 text-center">
+            <div class="col-lg-12 text-right">
                 {% block content %}
                 {% endblock content %}
             </div>
@@ -57,8 +40,9 @@
 </main>
 
 <footer>
-    <p>© 2023 Доска объявлений. All rights reserved.</p>
+    <div class="col-lg-12 text-center">
+        <p>© 2023 Доска объявлений. All rights reserved.</p>
+    </div>
 </footer>
 </body>
 </html>
-
