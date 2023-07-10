@@ -52,10 +52,6 @@ class Response(models.Model):
     author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authored_response')
     advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='responses')
-    # user = models.ForeignKey(CustomUser,
-    #                          on_delete=models.CASCADE,
-    #                          related_name='responses',
-    #                          verbose_name='User')
     article = models.ForeignKey(Advert,
                                 on_delete=models.CASCADE,
                                 related_name='responses')
@@ -90,6 +86,7 @@ class Response(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Category Name")
     is_ad_category = models.BooleanField(default=False, verbose_name="Is Advertisement Category")
+    adverts = models.ManyToManyField(Advert, related_name='categories', verbose_name="Adverts")
 
     def __str__(self):
         return self.name

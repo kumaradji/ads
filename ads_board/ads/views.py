@@ -10,7 +10,12 @@ from django.views import View
 from .filters import AdvertFilter
 from .forms import PostForm
 from .models import Advert, Response
-from ads_board.tasks.tasks import send_registration_email, send_response_email
+from ads_board.tasks.tasks import send_registration_email
+
+from django.dispatch import Signal
+
+# Определите сигнал для отправки e-mail
+send_response_email_signal = Signal()
 
 
 # Представление для главной страницы
@@ -79,7 +84,7 @@ class AdvertUpdateView(UpdateView):
 class ResponseCreateView(LoginRequiredMixin, CreateView):
     raise_exception = True
     model = Response
-    ordering = ' -createDate'
+    ordering = '-createDate'
     context_object_name = 'responses'
     fields = ['response_text']
     template_name = 'ads/response_create.html'
@@ -88,8 +93,13 @@ class ResponseCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         form.instance.article = Advert.objects.get(pk=self.kwargs['pk'])
-        # Вызов задачи отправки e-mail
-        send_response_email.delay(self.request.user.email, form.instance.article.title)
+
+        user_email = 'user@example.com'
+        advert_title = 'Название объявления'
+        send_response_email_signal.send(
+            sender=None,
+            user_email=user_email,
+            advert_title=advert_title)
 
         return super().form_valid(form)
 

@@ -1,3 +1,8 @@
+from datetime import timedelta
+from ads_board.celery import app as celery_app
+
+__all__ = ('celery_app',)
+
 from celery import shared_task
 from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
@@ -19,25 +24,16 @@ def send_registration_email(email, confirmation_code):
 
 
 @shared_task
-def send_response_email(user_email, advert_title):
-    subject = 'Отклик на объявление'
-    message = f'Вы получили отклик на объявление "{advert_title}"'
-    from_email = 'Ku79313081435@yandex.ru'
-    recipient_list = [user_email]
-
-    send_mail(subject, message, from_email, recipient_list)
-
-
-@shared_task
 def send_email():
     today = timezone.now()
-    last_week = today - timezone.timedelta(days=7)
-    posts = Advert.objects.filter(date__gte=last_week)
-    categories = set(posts.values_list('category__name', flat=True))
-    subscribers = set(Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
+    last_week = today - timedelta(days=7)
+    adverts = Advert.objects.filter(created_at__gte=last_week)
+    subscribers = Category.objects.filter(adverts__in=adverts).values_list('subscribers__email', flat=True).distinct()
+
     html_content = render_to_string(
         'daily_advert.html',
         {
+            'adverts': adverts,
             'link': settings.SITE_URL,
         }
     )

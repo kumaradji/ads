@@ -1,38 +1,29 @@
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
-# from django.contrib.auth.models import User
-# from django.db.models.signals import post_save, pre_save
-# from django.dispatch import receiver
-# from django.core.mail import send_mail
-#
-# from users.models import CustomUser, Author
-#
-#
-# # Отправка сигнала когда появляется объявления в первый раз
-# @receiver(post_save, sender=CustomUser)
-# def my_handler(sender, instance, created, **kwargs):
-#     # Отправка сигнала если автор принял отклик
-#     if instance.status:
-#         mail = instance.user.email
-#         send_mail(
-#             'Subject here',
-#             'Here is the message.',
-#             'host@mail.ru',
-#             [mail],
-#             fail_silently=False,
-#         )
-#     # Отправка на почту автору объявления, если ещё отклик не принят
-#     mail = instance.article.user.email
-#     send_mail(
-#         'Subject here',
-#         'Here is the message.',
-#         'host@mail.ru',
-#         [mail],
-#         fail_silently=False,
-#     )
-#
-#
-# @receiver(post_save, sender=User)
-# def create_author(sender, instance, created, **kwargs):
-#     if created:
-#         Author.objects.create(author=instance)
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+
+from ads.models import Response
+
+
+@receiver(post_save, sender=Response)
+def response_created(instance, created, **kwargs):
+    if created:
+        send_mail(
+            subject='На ваше объявление откликнулись!',
+            message=f'{instance.advertResponse.author.username}, вам оклик от {instance.authorResponse}! Вот он: "{instance.text}" ',
+            from_email=None,
+            recipient_list=[instance.advertResponse.author.email],
+        )
+        return
+
+
+@receiver(post_save, sender=Response)
+def response_accept(instance, **kwargs):
+    if instance.status:
+        send_mail(
+            subject='Ваш отклик приняли!',
+            message=f'{instance.authorResponse.username}, ваш отклик к {instance.advertResponse.title} приняли',
+            from_email=None,
+            recipient_list=[instance.authorResponse.email],
+        )
+        return

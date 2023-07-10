@@ -40,13 +40,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
-CELERY_BEAT_SCHEDULE = {
-    'send_email_every_monday_8am': {
-        'task': 'ads.tasks.tasks.send_email',
-        'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
-        'args': (),
-    },
-}
+
 
 # Application definition
 
