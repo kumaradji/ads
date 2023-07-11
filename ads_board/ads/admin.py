@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import (Advert, Response, CustomUser)
+from .models import (Advert, Response)
 
 admin.site.register(Advert)
 admin.site.register(Response)
-admin.site.register(CustomUser)

@@ -31,8 +31,7 @@ class CustomRegistrationForm(RegistrationForm):
         if commit:
             user.save()
 
-        # Добавьте здесь логику перенаправления на страницу со списком объявлений
-        redirect_url = reverse('ads:advert-list')  # Замените 'ads:advert-list' на URL-шаблон списка объявлений
+        redirect_url = reverse('ads:advert-list')
         request.session['redirect_url'] = redirect_url
 
         return user
