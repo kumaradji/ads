@@ -5,10 +5,22 @@
 {% block content %}
   <h1>Детали объявления</h1>
   <h2>{{ object.title }}</h2>
+
+   <a href="{% url 'ads:response-create' pk=object.pk %}" class="button">Отклик на объявление</a>
   <p>Content: {{ object.content }}</p>
   <p>Category: {{ object.category }}</p>
   <p>Author: {{ object.user }}</p>  <!-- Добавлено отображение автора объявления -->
 
-  <a href="{% url 'ads:response-create' pk=object.pk %}">Отклик на объявление</a>
+{% if object.upload %}
+    {% if object.media_file.url|lower|slice:'-3' == 'mp4' %}
+      <video controls>
+        <source src="{{ object.upload.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    {% else %}
+      <img src="{{ object.upload.url }}" alt="Media">
+    {% endif %}
+  {% endif %}
+
 
 {% endblock %}

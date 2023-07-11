@@ -79,6 +79,19 @@ class AdvertUpdateView(UpdateView):
     template_name = 'ads/advert_update.html'
     fields = ['title', 'content', 'category']
     success_url = reverse_lazy('ads:advert-list')
+    context_object_name = 'object'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        advert = self.get_object()
+        initial['title'] = advert.title
+        initial['content'] = advert.content
+        return initial
+
+    def get_object(self, queryset=None):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, pk=self.kwargs['pk'])
+        return obj
 
 
 class ResponseCreateView(LoginRequiredMixin, CreateView):

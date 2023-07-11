@@ -10,4 +10,16 @@
     {{ form.as_p }}
     <button type="submit">Сохранить изменения</button>
   </form>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var titleInput = document.getElementById('id_title');
+      var contentInput = document.getElementById('id_content');
+      var titleValue = '{{ object.title }}';
+      var contentValue = '{{ object.content }}';
+
+      titleInput.value = titleValue;
+      contentInput.value = contentValue;
+    });
+  </script>
 {% endblock %}
