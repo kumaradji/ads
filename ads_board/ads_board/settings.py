@@ -38,6 +38,10 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "/users/login"
+LOGOUT_REDIRECT_URL = "/users/login"
+
 # Application definition
 
 INSTALLED_APPS = [
