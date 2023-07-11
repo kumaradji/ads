@@ -92,8 +92,7 @@ class LoginView(View):
                     else:
                         return redirect('advert-list')
         else:
-            print("Form is invalid")  # Отладочный вывод
-        form.add_error(None, 'Неверные имя пользователя или пароль.')
+            form.add_error(None, 'Неверные имя пользователя или пароль.')
         return render(request, 'users/login.html', {'form': form})
 
 
