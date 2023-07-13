@@ -76,6 +76,7 @@ class Response(models.Model):
         self.save()
 
     class Meta:
+        permissions = [('response_create', 'Can create response')]
         verbose_name = 'Отклик'
         verbose_name_plural = 'Отклики'
 

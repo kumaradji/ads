@@ -5,21 +5,13 @@
 {% block content %}
   <h1>Изменение объявления</h1>
 
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить изменения</button>
-  </form>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      var titleInput = document.getElementById('id_title');
-      var contentInput = document.getElementById('id_content');
-      var titleValue = '{{ object.title }}';
-      var contentValue = '{{ object.content }}';
-
-      titleInput.value = titleValue;
-      contentInput.value = contentValue;
-    });
-  </script>
+  {% if object.user == request.user %}
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Сохранить изменения</button>
+    </form>
+  {% else %}
+    <p>У вас нет прав для изменения этого объявления.</p>
+  {% endif %}
 {% endblock %}

@@ -6,12 +6,30 @@
   <h1>Детали объявления</h1>
   <h2>{{ object.title }}</h2>
 
-   <a href="{% url 'ads:response-create' pk=object.pk %}" class="button">Отклик на объявление</a>
+  {% if object.user == request.user %}
+    <form action="{% url 'ads:delete-advert' pk=object.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit">Удалить</button>
+    </form>
+
+    <form action="{% url 'ads:update-advert' pk=object.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit">Изменить</button>
+    </form>
+  {% endif %}
+
+  {% if object.user != request.user %}
+    <form action="{% url 'ads:response-create' pk=object.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit" class="button">Отклик на объявление</button>
+    </form>
+  {% endif %}
+
   <p>Content: {{ object.content }}</p>
   <p>Category: {{ object.category }}</p>
-  <p>Author: {{ object.user }}</p>  <!-- Добавлено отображение автора объявления -->
+  <p>Author: {{ object.user }}</p>
 
-{% if object.upload %}
+  {% if object.upload %}
     {% if object.media_file.url|lower|slice:'-3' == 'mp4' %}
       <video controls>
         <source src="{{ object.upload.url }}" type="video/mp4">
@@ -21,6 +39,4 @@
       <img src="{{ object.upload.url }}" alt="Media">
     {% endif %}
   {% endif %}
-
-
 {% endblock %}

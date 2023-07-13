@@ -9,15 +9,9 @@
   <ul>
     {% for advert in adverts %}
       <li>
-        <form action="{% url 'ads:delete-advert' pk=advert.pk %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">Удалить</button>
-        </form>
-        <form action="{% url 'ads:update-advert' pk=advert.pk %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">Изменить</button>
-        </form>
-        <a href="{% url 'ads:advert-detail' pk=advert.pk %}">{{ advert.title }}</a>
+        <div class="advert-header">
+          <a href="{% url 'ads:advert-detail' pk=advert.pk %}">{{ advert.title }}</a>
+        </div>
       </li>
     {% empty %}
       <li>У вас нет объявлений.</li>
@@ -47,10 +41,14 @@
           {% csrf_token %}
           <button type="submit">Удалить отклик</button>
         </form>
-        <form action="{% url 'ads:accept-response' response_id=response.id %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">Принять отклик</button>
-        </form>
+        {% if response.status %}
+          <p>Отклик принят</p>
+        {% else %}
+          <form action="{% url 'ads:accept-response' response_id=response.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Принять отклик</button>
+          </form>
+        {% endif %}
       </li>
     {% empty %}
       <li>У вас нет откликов на объявления.</li>

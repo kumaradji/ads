@@ -38,9 +38,9 @@ class AdvertListView(LoginRequiredMixin, ListView):
         return context
 
 
-class AdvertCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class AdvertCreateView(PermissionRequiredMixin, CreateView):
     raise_exception = True
-    permission_required = 'ads.add_post'
+    permission_required = 'ads.add_advert'
     form_class = PostForm
     model = Advert
     template_name = 'ads/advert_create.html'
@@ -74,8 +74,9 @@ class AdvertDeleteView(DeleteView):
     success_url = reverse_lazy('ads:advert-list')
 
 
-class AdvertUpdateView(UpdateView):
+class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
     model = Advert
+    permission_required = 'ads.add_advert'
     template_name = 'ads/advert_update.html'
     fields = ['title', 'content', 'category']
     success_url = reverse_lazy('ads:advert-list')
@@ -94,8 +95,9 @@ class AdvertUpdateView(UpdateView):
         return obj
 
 
-class ResponseCreateView(LoginRequiredMixin, CreateView):
+class ResponseCreateView(PermissionRequiredMixin, CreateView):
     raise_exception = True
+    permission_required = 'ads.response_create'
     model = Response
     ordering = '-createDate'
     context_object_name = 'responses'
@@ -140,7 +142,13 @@ class PrivatePageView(LoginRequiredMixin, ListView):
 
 class AcceptResponseView(LoginRequiredMixin, View):
     def get(self, request, response_id):
-        response = Response.objects.get(pk=response_id)
+        response = get_object_or_404(Response, pk=response_id)
+        response.accepted = True
+        response.save()
+        return redirect('ads:private')
+
+    def post(self, request, response_id):
+        response = get_object_or_404(Response, pk=response_id)
         response.accepted = True
         response.save()
         return redirect('ads:private')
