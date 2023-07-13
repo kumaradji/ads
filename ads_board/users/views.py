@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
@@ -28,7 +28,7 @@ class SignUp(CreateView):
     model = get_user_model()
     form_class = RegistrationForm
     template_name = 'users/signup.html'
-    success_url = '/ads/'
+    success_url = reverse_lazy('ads:advert-list')
 
     def form_valid(self, form):
         user = form.save()
@@ -39,12 +39,11 @@ class SignUp(CreateView):
         confirmation_code = generate_confirmation_code()
         # Запланировать задачу отправки письма с помощью Celery
         send_registration_email.delay(user.email, confirmation_code)
-
         # Отправить письмо приветствия
         send_mail(
-            subject='Добро пожаловать в наш интернет-магазин!',
+            subject='Добро пожаловать на наш сайт объявлений!',
             message=f'{user.username}, вы успешно зарегистрировались!',
-            from_email=None,  # будет использовано значение DEFAULT_FROM_EMAIL
+            from_email=None,
             recipient_list=[user.email],
         )
 

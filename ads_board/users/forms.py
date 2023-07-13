@@ -20,11 +20,6 @@ class RegistrationForm(UserCreationForm):
         return user
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(label='Имя пользователя', max_length=254)
-    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
-
-
 class CustomRegistrationForm(RegistrationForm):
     def save(self, request):
         user = super().save(commit=False)
@@ -35,3 +30,8 @@ class CustomRegistrationForm(RegistrationForm):
         request.session['redirect_url'] = redirect_url
 
         return user
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Имя пользователя', max_length=254)
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)

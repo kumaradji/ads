@@ -131,6 +131,12 @@ class PrivatePageView(LoginRequiredMixin, ListView):
         user = self.request.user
         return Advert.objects.filter(user=user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['responses'] = Response.objects.filter(advert__user=user)
+        return context
+
 
 class AcceptResponseView(LoginRequiredMixin, View):
     def get(self, request, response_id):
