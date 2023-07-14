@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -15,6 +16,8 @@ from ads_board.tasks.tasks import send_registration_email
 from ads.models import Response
 import random
 import string
+
+from .models import Profile
 
 
 def generate_confirmation_code():
@@ -158,3 +161,13 @@ def profile(request):
         'user': user
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+@require_POST
+def become_author(request):
+    profile = Profile.objects.get(user=request.user)
+    profile.is_author = True
+    profile.save()
+
+    return redirect('users:profile')

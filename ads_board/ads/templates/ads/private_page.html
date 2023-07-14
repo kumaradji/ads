@@ -54,4 +54,11 @@
       <li>У вас нет откликов на объявления.</li>
     {% endfor %}
   </ul>
+
+  {% if not is_author %}
+    <form action="{% url 'users:become-author' %}" method="POST">
+      {% csrf_token %}
+      <button type="submit">Стать автором</button>
+    </form>
+  {% endif %}
 {% endblock %}
