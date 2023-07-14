@@ -11,3 +11,14 @@ class PostForm(forms.ModelForm):
                   'content',
                   'upload'
                   ]
+
+
+class AdvertForm(forms.ModelForm):
+    class Meta:
+        model = Advert
+        fields = ['title', 'content', 'category']
+        labels = {
+            'title': 'Заголовок',
+            'content': 'Текст объявления',
+            'category': 'Категория'
+        }

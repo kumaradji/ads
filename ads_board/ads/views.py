@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.views import View
 
 from .filters import AdvertFilter
-from .forms import PostForm
+from .forms import PostForm, AdvertForm
 from .models import Advert, Response
 from ads_board.tasks.tasks import send_registration_email
 
@@ -74,25 +74,11 @@ class AdvertDeleteView(DeleteView):
     success_url = reverse_lazy('ads:advert-list')
 
 
-class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
+class AdvertUpdateView(UpdateView):
     model = Advert
-    permission_required = 'ads.add_advert'
     template_name = 'ads/advert_update.html'
-    fields = ['title', 'content', 'category']
+    form_class = AdvertForm
     success_url = reverse_lazy('ads:advert-list')
-    context_object_name = 'object'
-
-    def get_initial(self):
-        initial = super().get_initial()
-        advert = self.get_object()
-        initial['title'] = advert.title
-        initial['content'] = advert.content
-        return initial
-
-    def get_object(self, queryset=None):
-        queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, pk=self.kwargs['pk'])
-        return obj
 
 
 class ResponseCreateView(PermissionRequiredMixin, CreateView):
