@@ -3,8 +3,8 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-<h1>Вход</h1>
-<form method="post" action="{% url 'users:login' %}">
+  <h1>Вход</h1>
+  <form method="post" action="{% url 'users:login' %}">
     {% csrf_token %}
     <!-- Форма входа -->
     <label for="username">Имя пользователя:</label>
@@ -14,7 +14,13 @@
     <input type="password" name="password" required>
 
     <input type="hidden" name="next" value="{{ request.GET.next }}">
-    <button type="submit">Войти</button>
 
-</form>
+    {% if user.is_new_user %}
+      <!-- Форма ввода кода подтверждения -->
+      <label for="confirmation_code">Код подтверждения:</label>
+      <input type="text" id="confirmation_code" name="confirmation_code" required>
+    {% endif %}
+
+    <button type="submit">Войти</button>
+  </form>
 {% endblock %}

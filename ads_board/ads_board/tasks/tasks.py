@@ -1,13 +1,11 @@
-from datetime import timedelta
-from ads_board.celery import app as celery_app
-
-__all__ = ('celery_app',)
-
-from celery import shared_task
 from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+
+from datetime import timedelta
+
+from celery import shared_task
 
 from ads.models import Advert, Category
 from ads_board import settings

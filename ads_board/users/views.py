@@ -37,8 +37,10 @@ class SignUp(CreateView):
         user.save()
 
         confirmation_code = generate_confirmation_code()
+
         # Запланировать задачу отправки письма с помощью Celery
         send_registration_email.delay(user.email, confirmation_code)
+
         # Отправить письмо приветствия
         send_mail(
             subject='Добро пожаловать на наш сайт объявлений!',
@@ -47,7 +49,17 @@ class SignUp(CreateView):
             recipient_list=[user.email],
         )
 
-        return super().form_valid(form)
+        return redirect('users:confirmation')
+
+
+class ConfirmationView(View):
+    template_name = 'users/confirmation.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        return redirect('users:login')
 
 
 class ProfileView(LoginRequiredMixin, View):

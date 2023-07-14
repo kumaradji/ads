@@ -24,7 +24,7 @@ class AdvertListView(LoginRequiredMixin, ListView):
     ordering = '-created_at'
     template_name = 'ads/advert_list.html'
     context_object_name = 'advert_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = super().get_queryset()

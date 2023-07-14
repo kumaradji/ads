@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 from celery import Celery
 from celery.schedules import crontab
@@ -17,9 +16,4 @@ app.conf.beat_schedule = {
         'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
         'args': (),
     },
-    # 'send_email_every_30': {
-    #     'task': 'ads_board.tasks.send_email',
-    #     'schedule': timedelta(seconds=30),
-    #     'args': (),
-    # },
 }

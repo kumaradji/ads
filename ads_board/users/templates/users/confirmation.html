@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block title %}Ввод кода подтверждения{% endblock %}
+
+{% block content %}
+  <h1>Ввод кода подтверждения</h1>
+  <form method="post" action="{% url 'users:confirmation' %}">
+    {% csrf_token %}
+    <label for="confirmation_code">Код подтверждения:</label>
+    <input type="text" id="confirmation_code" name="confirmation_code" required>
+    <button type="submit">Продолжить</button>
+  </form>
+{% endblock %}
