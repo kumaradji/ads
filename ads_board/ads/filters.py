@@ -5,6 +5,16 @@ from django_filters import FilterSet, CharFilter, ModelChoiceFilter
 from django.db.models import Q
 
 
+from django import template
+
+register = template.Library()
+
+
+@register.filter
+def is_author(user):
+    return user.groups.filter(name='Авторы').exists()
+
+
 class AdvertFilter(FilterSet):
     add_title = CharFilter(
         field_name='title',

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -46,22 +47,17 @@ class Advert(models.Model):
 
 
 class Response(models.Model):
-    author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authored_response')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_responses')
     advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='responses')
-    article = models.ForeignKey(Advert,
-                                on_delete=models.CASCADE,
-                                related_name='responses')
     response_text = models.TextField(verbose_name='Response text')
-    created_at = models.DateTimeField(auto_now_add=True,
-                                      verbose_name='Created at')
-    status = models.BooleanField(default=False,
-                                 verbose_name='Is accepted')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created at')
+    status = models.BooleanField(default=False, verbose_name='Is accepted')
     likes = models.PositiveIntegerField(default=0)
     dislikes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'Отклик от {self.user.username} на объявление: {self.article.title}'
+        return f'Отклик от {self.user.username} на объявление: {self.advert.title}'
 
     def accept(self):
         self.status = True
@@ -79,6 +75,9 @@ class Response(models.Model):
         permissions = [('response_create', 'Can create response')]
         verbose_name = 'Отклик'
         verbose_name_plural = 'Отклики'
+
+    def get_absolute_url(self):
+        return reverse('ads:response-detail', kwargs={'pk': self.pk})
 
 
 class Category(models.Model):

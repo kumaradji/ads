@@ -11,12 +11,13 @@
 
   {% if is_author %}
     <p>Статус: Автор</p>
-  {% else %}
+{% else %}
     <form method="post" action="{% url 'users:private' %}">
-      {% csrf_token %}
-      <button type="submit">Стать автором</button>
+        {% csrf_token %}
+        <button type="submit">Стать автором</button>
     </form>
-  {% endif %}
+{% endif %}
+
 
   <h2>Мои объявления</h2>
   <ul>

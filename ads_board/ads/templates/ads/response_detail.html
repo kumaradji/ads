@@ -1,8 +1,8 @@
 {% extends 'index.html' %}
 {% block title %} Отклик на объявление {% endblock %}
 {% block content %}
-  <h1>Response Detail</h1>
-  <h2>Response by: {{ object.author }}</h2>
-  <p>Response Text: {{ object.response_text }}</p>
+  <h1>Отклик на объявление</h1>
+  <h2>Отклик от: {{ object.author }}</h2>
+  <p>Текст отклика: {{ object.response_text }}</p>
   <!-- Дополнительные поля и информация об отклике -->
 {% endblock %}

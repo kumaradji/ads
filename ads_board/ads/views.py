@@ -91,7 +91,7 @@ class ResponseCreateView(PermissionRequiredMixin, CreateView):
     raise_exception = True
     permission_required = 'ads.response_create'
     model = Response
-    ordering = '-createDate'
+    ordering = '-created_at'
     context_object_name = 'responses'
     fields = ['response_text']
     template_name = 'ads/response_create.html'
@@ -99,14 +99,16 @@ class ResponseCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.article = Advert.objects.get(pk=self.kwargs['pk'])
+        form.instance.advert = Advert.objects.get(pk=self.kwargs['pk'])
+        form.instance.user = self.request.user
 
-        user_email = 'user@example.com'
-        advert_title = 'Название объявления'
+        user_email = self.request.user.email
+        advert_title = form.instance.advert.title
         send_response_email_signal.send(
             sender=None,
             user_email=user_email,
-            advert_title=advert_title)
+            advert_title=advert_title
+        )
 
         return super().form_valid(form)
 
