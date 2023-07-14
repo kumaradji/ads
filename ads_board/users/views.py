@@ -166,7 +166,7 @@ def profile(request):
 @login_required
 @require_POST
 def become_author(request):
-    profile = Profile.objects.get(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)
     profile.is_author = True
     profile.save()
 

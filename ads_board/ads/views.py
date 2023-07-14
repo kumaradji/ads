@@ -7,6 +7,7 @@ from django.views.generic import CreateView, DetailView, ListView, DeleteView, U
 from django.shortcuts import redirect
 from django.views import View
 
+from users.models import Profile
 from .filters import AdvertFilter
 from .forms import PostForm, AdvertForm
 from .models import Advert, Response
@@ -123,6 +124,7 @@ class PrivatePageView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['responses'] = Response.objects.filter(advert__user=user)
+        context['is_author'] = Profile.objects.filter(user=user, is_author=True).exists()
         return context
 
 
