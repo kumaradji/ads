@@ -1,17 +1,19 @@
 from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from django.shortcuts import redirect
 from django.views import View
 
+from ads_board import settings
 from users.models import Profile
 from .filters import AdvertFilter
 from .forms import PostForm, AdvertForm
 from .models import Advert, Response
-from ads_board.tasks.tasks import send_registration_email
 
 from django.dispatch import Signal
 
@@ -45,18 +47,21 @@ class AdvertCreateView(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Advert
     template_name = 'ads/advert_create.html'
-    success_url = 'ads/advert/<int:pk>/'
 
     def form_valid(self, form):
         advert = form.save(commit=False)
         advert.user = self.request.user
-        advert.author = self.request.user  # Фиксация автора
+        advert.author = self.request.user
         advert.save()
         form.instance.author = self.request.user
         form.instance.user = self.request.user
 
-        # Вызов задачи отправки e-mail
-        send_registration_email.delay(self.request.user.email, advert.title)
+        # Отправка e-mail
+        subject = 'Новое объявление'
+        message = f'Ваше объявление "{advert.title}" успешно опубликовано.'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [self.request.user.email]
+        send_mail(subject, message, from_email, recipient_list)
 
         return super().form_valid(form)
 
@@ -111,21 +116,42 @@ class ResponseDetailView(DetailView):
     template_name = 'ads/response_detail.html'
 
 
-class PrivatePageView(LoginRequiredMixin, ListView):
+class PrivatePageView(LoginRequiredMixin, View):
     template_name = 'ads/private_page.html'
-    context_object_name = 'adverts'
-    paginate_by = 10
 
-    def get_queryset(self):
-        user = self.request.user
-        return Advert.objects.filter(user=user)
+    def get(self, request):
+        user = request.user
+        adverts = Advert.objects.filter(user=user)
+        responses = Response.objects.filter(advert__user=user)
+        is_author = Profile.objects.filter(user=user, is_author=True).exists()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['responses'] = Response.objects.filter(advert__user=user)
-        context['is_author'] = Profile.objects.filter(user=user, is_author=True).exists()
-        return context
+        context = {
+            'adverts': adverts,
+            'responses': responses,
+            'is_author': is_author,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = request.user
+
+        if not Profile.objects.filter(user=user, is_author=True).exists():
+            author_group = Group.objects.get_or_create(name='Авторы')[0]
+            user.groups.add(author_group)
+            user.save()
+            is_author = True
+        else:
+            is_author = False
+
+        adverts = Advert.objects.filter(user=user)
+        responses = Response.objects.filter(advert__user=user)
+
+        context = {
+            'adverts': adverts,
+            'responses': responses,
+            'is_author': is_author,
+        }
+        return render(request, self.template_name, context)
 
 
 class AcceptResponseView(LoginRequiredMixin, View):

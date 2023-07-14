@@ -4,16 +4,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
 from django.views.generic import ListView, DeleteView
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
 
 from .forms import RegistrationForm, LoginForm
-from ads_board.tasks.tasks import send_registration_email
-from ads.models import Response
+from ads.models import Response, Advert
 import random
 import string
 
@@ -41,15 +40,19 @@ class SignUp(CreateView):
 
         confirmation_code = generate_confirmation_code()
 
-        # Запланировать задачу отправки письма с помощью Celery
-        send_registration_email.delay(user.email, confirmation_code)
+        # Генерируем HTML-контент для письма
+        html_content = render_to_string('users/registration_email.html', {
+            'username': user.username,
+            'confirmation_code': confirmation_code,
+        })
 
-        # Отправить письмо приветствия
+        # Отправляем письмо с кодом подтверждения и приветственным сообщением
         send_mail(
             subject='Добро пожаловать на наш сайт объявлений!',
-            message=f'{user.username}, вы успешно зарегистрировались!',
+            message='',
             from_email=None,
             recipient_list=[user.email],
+            html_message=html_content
         )
 
         return redirect('users:confirmation')
@@ -63,26 +66,6 @@ class ConfirmationView(View):
 
     def post(self, request):
         return redirect('users:login')
-
-
-class ProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        user = request.user
-        context = {
-            'user': user
-        }
-        return render(request, 'users/profile.html', context)
-
-    def post(self, request):
-        user = request.user
-
-        if not user.is_staff:
-            author_group = models.Group.objects.get(name='Авторы')
-            user.groups.add(author_group)
-            user.is_staff = True
-            user.save()
-
-        return redirect('profile')
 
 
 class LoginView(View):
@@ -147,27 +130,45 @@ class ResponseDeleteView(LoginRequiredMixin, DeleteView):
         return redirect('profile')
 
 
+class PrivateProfileView(LoginRequiredMixin, View):
+    template_name = 'ads/private_page.html'
+
+    def get(self, request):
+        user = request.user
+        adverts = Advert.objects.filter(user=user)
+        responses = Response.objects.filter(advert__user=user)
+        is_author = Profile.objects.filter(user=user, is_author=True).exists()
+
+        context = {
+            'user': user,
+            'adverts': adverts,
+            'responses': responses,
+            'is_author': is_author,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = request.user
+        is_author = False
+
+        if not Profile.objects.filter(user=user, is_author=True).exists():
+            author_group = Group.objects.get_or_create(name='Авторы')[0]
+            user.groups.add(author_group)
+            user.save()
+            is_author = True
+
+        adverts = Advert.objects.filter(user=user)
+        responses = Response.objects.filter(advert__user=user)
+
+        context = {
+            'user': user,
+            'adverts': adverts,
+            'responses': responses,
+            'is_author': is_author,
+        }
+        return render(request, self.template_name, context)
+
+
 @login_required
 def profile(request):
-    user = request.user
-
-    if not user.groups.filter(name='Авторы').exists():
-        author_group = Group.objects.get(name='Авторы')
-        user.groups.add(author_group)
-        user.is_author = True
-        user.save()
-
-    context = {
-        'user': user
-    }
-    return render(request, 'users/profile.html', context)
-
-
-@login_required
-@require_POST
-def become_author(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    profile.is_author = True
-    profile.save()
-
-    return redirect('users:profile')
+    return redirect('ads:private')

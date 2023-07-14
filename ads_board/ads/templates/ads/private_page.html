@@ -5,6 +5,19 @@
 {% block content %}
   <h1>Приватная страница</h1>
 
+  <h2>Информация о профиле</h2>
+  <p>Имя пользователя: {{ user.username }}</p>
+  <p>Email: {{ user.email }}</p>
+
+  {% if is_author %}
+    <p>Статус: Автор</p>
+  {% else %}
+    <form method="post" action="{% url 'users:private' %}">
+      {% csrf_token %}
+      <button type="submit">Стать автором</button>
+    </form>
+  {% endif %}
+
   <h2>Мои объявления</h2>
   <ul>
     {% for advert in adverts %}
@@ -55,10 +68,4 @@
     {% endfor %}
   </ul>
 
-  {% if not is_author %}
-    <form action="{% url 'users:become-author' %}" method="POST">
-      {% csrf_token %}
-      <button type="submit">Стать автором</button>
-    </form>
-  {% endif %}
 {% endblock %}
