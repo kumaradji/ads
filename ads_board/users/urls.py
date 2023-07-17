@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import SignUp, LoginView, LogoutView, PrivateProfileView, ResponseListView, ResponseDeleteView, ConfirmationView, profile
+from .views import (
+    SignUp,
+    LoginView,
+    LogoutView,
+    PrivateProfileView,
+    ResponseListView,
+    ResponseDeleteView,
+    ConfirmationView
+)
 
 app_name = 'users'
 

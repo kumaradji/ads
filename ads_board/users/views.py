@@ -20,19 +20,25 @@ from .models import Profile
 
 
 def generate_confirmation_code():
-    """Генерирует случайный код подтверждения."""
+    """Generate a random confirmation code."""
     code_length = 6
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(code_length))
 
 
 class SignUp(CreateView):
+    """
+    View for user registration/signup.
+    Uses the RegistrationForm to handle user registration.
+    """
+
     model = get_user_model()
     form_class = RegistrationForm
     template_name = 'users/signup.html'
     success_url = reverse_lazy('ads:advert-list')
 
     def form_valid(self, form):
+        """Save the user, add them to the 'Пользователи' group, and send a confirmation email."""
         user = form.save()
         group = Group.objects.get_or_create(name='Пользователи')[0]
         user.groups.add(group)
@@ -40,13 +46,13 @@ class SignUp(CreateView):
 
         confirmation_code = generate_confirmation_code()
 
-        # Генерируем HTML-контент для письма
+        # Generate HTML content for the email
         html_content = render_to_string('users/registration_email.html', {
             'username': user.username,
             'confirmation_code': confirmation_code,
         })
 
-        # Отправляем письмо с кодом подтверждения и приветственным сообщением
+        # Send the email with the confirmation code and a welcome message
         send_mail(
             subject='Добро пожаловать на наш сайт объявлений!',
             message='',
@@ -59,6 +65,11 @@ class SignUp(CreateView):
 
 
 class ConfirmationView(View):
+    """
+    View for user confirmation after registration.
+    Renders the confirmation template.
+    """
+
     template_name = 'users/confirmation.html'
 
     def get(self, request):
@@ -69,6 +80,11 @@ class ConfirmationView(View):
 
 
 class LoginView(View):
+    """
+    View for user login.
+    Renders the login template and handles the login form submission.
+    """
+
     def get(self, request):
         form = LoginForm()
         return render(request, 'users/login.html', {'form': form})
@@ -94,10 +110,20 @@ class LoginView(View):
 
 
 class LogoutView(LogoutView):
+    """
+    View for user logout.
+    Redirects to the login page after successful logout.
+    """
+
     next_page = 'users:login'
 
 
 class ResponseListView(LoginRequiredMixin, ListView):
+    """
+    View for listing user's responses.
+    Shows a list of responses for the authenticated user.
+    """
+
     template_name = 'users/response_list.html'
     context_object_name = 'responses'
 
@@ -106,6 +132,11 @@ class ResponseListView(LoginRequiredMixin, ListView):
 
 
 class ResponseDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    View for deleting a response.
+    Allows the user to delete their own response.
+    """
+
     model = Response
     template_name = 'users/response_confirm_delete.html'
     success_url = reverse_lazy('profile')
@@ -131,6 +162,11 @@ class ResponseDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class PrivateProfileView(LoginRequiredMixin, View):
+    """
+    View for the user's private profile page.
+    Shows the user's adverts, responses, and author status.
+    """
+
     template_name = 'ads/private_page.html'
 
     def get(self, request):
@@ -171,4 +207,9 @@ class PrivateProfileView(LoginRequiredMixin, View):
 
 @login_required
 def profile(request):
+    """
+    View for the user's profile page.
+    Redirects to the private profile page.
+    """
+
     return redirect('ads:private')

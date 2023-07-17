@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-from celery.schedules import crontab
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,9 +27,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 ACCOUNT_FORMS = {"signup": "users.forms.CustomSignupForm"}
-
-# APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
-# APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
@@ -72,14 +67,7 @@ MIDDLEWARE = [
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-# mandatory — не пускать пользователя на сайт до момента подтверждения почты
-# optional — сообщение о подтверждении почты будет отправлено,
-# но пользователь может залогиниться на сайте без подтверждения почты
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-# хранит количество дней, когда доступна ссылка на подтверждение регистрации
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 10
 # Настройки почты отправляется на консоль
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Настройки почты отправляется на реальный почтовый ящик
@@ -93,12 +81,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
 DEFAULT_FROM_EMAIL = 'Ku79313081435@yandex.ru'
-
 SERVER_EMAIL = 'Ku79313081435@yandex.ru'
-
-ADMINS = (
-    ('Кумар', 'kumaradji@me.com'),
-)
 
 ROOT_URLCONF = 'ads_board.urls'
 
@@ -127,7 +110,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ads_board.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -137,7 +119,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -182,7 +163,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static"
-]
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale')
 ]

@@ -3,9 +3,8 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-from celery import shared_task
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
+from celery import shared_task
 
 from ads.models import Advert
 from ads_board import settings
@@ -13,18 +12,23 @@ from ads_board import settings
 
 @shared_task
 def send_email():
+    """
+    Celery task to send weekly email with new adverts to all registered users.
+    """
     today = timezone.now()
     last_week = today - timedelta(days=7)
+
+    # Get all adverts created in the last week
     adverts = Advert.objects.filter(created_at__gte=last_week)
 
-    # Получаем всех зарегистрированных пользователей
+    # Get all registered users
     users = User.objects.all()
 
     for user in users:
-        # Получаем адрес электронной почты пользователя
+        # Get the email address of the user
         email = user.email
 
-        # Генерируем HTML-контент для письма, передавая объявления и ссылку на сайт
+        # Generate HTML content for the email, passing the adverts and the site link
         html_content = render_to_string(
             'daily_advert.html',
             {
@@ -33,16 +37,16 @@ def send_email():
             }
         )
 
-        # Создаем объект EmailMultiAlternatives для отправки писем
+        # Create an EmailMultiAlternatives object for sending the email
         msg = EmailMultiAlternatives(
-            subject='Объявления за неделю',
+            subject='Weekly Adverts',
             body='',
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[email],
         )
 
-        # Прикрепляем HTML-контент к письму
+        # Attach the HTML content to the email
         msg.attach_alternative(html_content, 'text/html')
 
-        # Отправляем письмо пользователю
+        # Send the email to the user
         msg.send()
