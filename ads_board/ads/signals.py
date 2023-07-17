@@ -7,10 +7,18 @@ from ads.models import Response
 
 @receiver(post_save, sender=Response)
 def response_created(instance, created, **kwargs):
+    """
+    Signal receiver function for handling response creation.
+
+    Args:
+        instance (Response): The created response instance.
+        created (bool): Indicates if the response was created or modified.
+        **kwargs: Additional keyword arguments.
+    """
     if created:
         send_mail(
             subject='На ваше объявление откликнулись!',
-            message=f'{instance.advert.user.username}, вам оклик от {instance.user.username}! Вот он: "{instance.response_text}" ',
+            message=f'{instance.advert.user.username}, вам отклик от {instance.user.username}! Вот он: "{instance.response_text}" ',
             from_email=None,
             recipient_list=[instance.advert.user.email],
         )
@@ -19,6 +27,13 @@ def response_created(instance, created, **kwargs):
 
 @receiver(post_save, sender=Response)
 def response_accept(instance, **kwargs):
+    """
+    Signal receiver function for handling response acceptance.
+
+    Args:
+        instance (Response): The response instance.
+        **kwargs: Additional keyword arguments.
+    """
     if instance.status:
         send_mail(
             subject='Ваш отклик приняли!',
